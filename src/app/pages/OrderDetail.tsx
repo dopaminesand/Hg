@@ -1,6 +1,38 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { LogOut, ArrowLeft, ArrowRight, MessageCircle } from 'lucide-react';
+import { LogOut, ArrowLeft, ArrowRight, MessageCircle, Phone, MapPin, Package, CreditCard, FileText } from 'lucide-react';
+
+// Simple barcode component that generates random bars
+function Barcode({ value }: { value: string }) {
+  // Generate random bar pattern based on value
+  const generateBars = () => {
+    const bars = [];
+    const seed = value.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    for (let i = 0; i < 50; i++) {
+      const width = ((seed * (i + 1) * 7) % 3) + 1;
+      const isBar = ((seed * (i + 1) * 13) % 2) === 0;
+      bars.push({ width, isBar });
+    }
+    return bars;
+  };
+
+  const bars = generateBars();
+
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <div className="flex items-end h-16 gap-px">
+        {bars.map((bar, i) => (
+          <div
+            key={i}
+            className={bar.isBar ? 'bg-slate-900' : 'bg-transparent'}
+            style={{ width: `${bar.width}px`, height: '100%' }}
+          />
+        ))}
+      </div>
+      <span className="text-xs font-mono text-slate-600 tracking-widest">{value}</span>
+    </div>
+  );
+}
 
 export default function OrderDetail() {
   const navigate = useNavigate();
@@ -20,35 +52,35 @@ export default function OrderDetail() {
       merchantName: 'Al-Rashid Delivery Corp',
       logout: 'Logout',
       backToDashboard: 'Back to Dashboard',
-      orderDetail: 'Order Detail',
+      orderTicket: 'Order Ticket',
       orderId: 'Order ID',
       date: 'Date',
       status: 'Status',
       delivered: 'Delivered',
       pending: 'Pending',
       cancelled: 'Cancelled',
-      clientInformation: 'Client Information',
-      clientName: 'Client Name',
+      clientInformation: 'Client',
+      clientName: 'Name',
       mobile: 'Mobile',
-      secondaryMobile: 'Secondary Mobile',
+      secondaryMobile: 'Alt. Mobile',
       city: 'City',
       region: 'Region',
       location: 'Location',
-      shipmentDetails: 'Shipment Details',
-      accountId: 'Account ID',
+      shipmentDetails: 'Shipment',
+      accountId: 'Account',
       type: 'Type',
       items: 'Items',
-      packageSize: 'Package Size',
+      packageSize: 'Size',
       replacement: 'Replacement',
       yes: 'Yes',
       no: 'No',
-      financialBreakdown: 'Financial Breakdown',
+      financialBreakdown: 'Payment',
       deliveryFee: 'Delivery Fee',
-      invoiceId: 'Invoice ID',
-      financialConfirmed: 'Financial Confirmed',
+      invoiceId: 'Invoice',
+      financialConfirmed: 'Confirmed',
       notes: 'Notes',
-      merchantNotes: 'Merchant Notes',
-      driverIssueNotes: 'Driver Issue Notes',
+      merchantNotes: 'Merchant',
+      driverIssueNotes: 'Driver Issue',
       iqd: 'IQD',
       support: 'Support',
       medium: 'Medium',
@@ -59,35 +91,35 @@ export default function OrderDetail() {
       merchantName: 'شركة الرشيد للتوصيل',
       logout: 'تسجيل الخروج',
       backToDashboard: 'العودة إلى لوحة التحكم',
-      orderDetail: 'تفاصيل الطلب',
+      orderTicket: 'تذكرة الطلب',
       orderId: 'رقم الطلب',
       date: 'التاريخ',
       status: 'الحالة',
       delivered: 'تم التسليم',
       pending: 'قيد الانتظار',
       cancelled: 'ملغي',
-      clientInformation: 'معلومات العميل',
-      clientName: 'اسم العميل',
+      clientInformation: 'العميل',
+      clientName: 'الاسم',
       mobile: 'الهاتف',
-      secondaryMobile: 'الهاتف الثانوي',
+      secondaryMobile: 'هاتف بديل',
       city: 'المدينة',
       region: 'المنطقة',
       location: 'الموقع',
-      shipmentDetails: 'تفاصيل الشحنة',
-      accountId: 'معرف الحساب',
+      shipmentDetails: 'الشحنة',
+      accountId: 'الحساب',
       type: 'النوع',
       items: 'العناصر',
-      packageSize: 'حجم الطرد',
+      packageSize: 'الحجم',
       replacement: 'استبدال',
       yes: 'نعم',
       no: 'لا',
-      financialBreakdown: 'التفاصيل المالية',
+      financialBreakdown: 'الدفع',
       deliveryFee: 'رسوم التوصيل',
-      invoiceId: 'رقم الفاتورة',
-      financialConfirmed: 'تأكيد مالي',
+      invoiceId: 'الفاتورة',
+      financialConfirmed: 'مؤكد',
       notes: 'الملاحظات',
-      merchantNotes: 'ملاحظات التاجر',
-      driverIssueNotes: 'ملاحظات مشكلة السائق',
+      merchantNotes: 'التاجر',
+      driverIssueNotes: 'مشكلة السائق',
       iqd: 'د.ع',
       support: 'الدعم',
       medium: 'متوسط',
@@ -98,7 +130,6 @@ export default function OrderDetail() {
 
   const t = translations[language];
 
-  // Mock order data (in a real app, this would come from URL params and API)
   const order = {
     orderId: '133409062',
     date: '2026-03-22',
@@ -141,13 +172,13 @@ export default function OrderDetail() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'delivered':
-        return 'bg-green-100 text-green-700 border-green-200';
+        return 'bg-emerald-500 text-white';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+        return 'bg-amber-500 text-white';
       case 'cancelled':
-        return 'bg-red-100 text-red-700 border-red-200';
+        return 'bg-red-500 text-white';
       default:
-        return 'bg-slate-100 text-slate-700 border-slate-200';
+        return 'bg-slate-500 text-white';
     }
   };
 
@@ -185,7 +216,6 @@ export default function OrderDetail() {
       <nav className="bg-white border-b border-slate-200 shadow-sm">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Logo and Merchant Name */}
             <div className="flex items-center gap-3">
               <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg">
                 <svg
@@ -207,7 +237,6 @@ export default function OrderDetail() {
               </span>
             </div>
 
-            {/* Right side - Language toggle and Logout */}
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setLanguage(language === 'en' ? 'ar' : 'en')}
@@ -228,7 +257,7 @@ export default function OrderDetail() {
       </nav>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-lg mx-auto px-4 py-8">
         {/* Back Button */}
         <button
           onClick={() => navigate('/dashboard')}
@@ -238,141 +267,170 @@ export default function OrderDetail() {
           <span className="text-sm font-medium">{t.backToDashboard}</span>
         </button>
 
-        {/* Order Detail Card */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-lg overflow-hidden">
-          {/* Section 1: Order Header */}
-          <div className="px-6 py-5 border-b border-slate-200">
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-slate-500">{t.orderId}:</span>
-                <span className="text-lg font-semibold text-slate-800">{order.orderId}</span>
-              </div>
-              <div className="w-px h-5 bg-slate-200 hidden sm:block" />
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-slate-500">{t.date}:</span>
-                <span className="text-sm font-medium text-slate-700">{order.date}</span>
-              </div>
-              <div className="w-px h-5 bg-slate-200 hidden sm:block" />
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-slate-500">{t.status}:</span>
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}
-                >
+        {/* Ticket Container */}
+        <div className="relative">
+          {/* Ticket Card */}
+          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+            {/* Ticket Header with Status */}
+            <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-6 py-5 text-white">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">{t.orderTicket}</span>
+                <span className={`px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(order.status)}`}>
                   {getStatusLabel(order.status)}
                 </span>
               </div>
+              <div className="text-3xl font-bold tracking-wide">#{order.orderId}</div>
+              <div className="text-sm text-slate-400 mt-1">{order.date}</div>
             </div>
-          </div>
 
-          {/* Section 2: Client Information */}
-          <div className="px-6 py-5 border-b border-slate-200">
-            <h3 className="text-sm font-semibold text-slate-800 mb-4 uppercase tracking-wide">
-              {t.clientInformation}
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <span className="text-xs text-slate-500 block mb-1">{t.clientName}</span>
-                <span className="text-sm font-medium text-slate-800">{order.client.name}</span>
-              </div>
-              <div>
-                <span className="text-xs text-slate-500 block mb-1">{t.mobile}</span>
-                <span className="text-sm font-medium text-slate-800" dir="ltr">{order.client.mobile}</span>
-              </div>
-              <div>
-                <span className="text-xs text-slate-500 block mb-1">{t.secondaryMobile}</span>
-                <span className="text-sm font-medium text-slate-800" dir="ltr">{order.client.secondaryMobile}</span>
-              </div>
-              <div>
-                <span className="text-xs text-slate-500 block mb-1">{t.city}</span>
-                <span className="text-sm font-medium text-slate-800">{order.client.city}</span>
-              </div>
-              <div>
-                <span className="text-xs text-slate-500 block mb-1">{t.region}</span>
-                <span className="text-sm font-medium text-slate-800">{order.client.region}</span>
-              </div>
-              <div>
-                <span className="text-xs text-slate-500 block mb-1">{t.location}</span>
-                <span className="text-sm font-medium text-slate-800">{order.client.location}</span>
+            {/* Perforated Edge */}
+            <div className="relative h-4 bg-slate-100">
+              <div className="absolute inset-x-0 top-0 h-4 flex items-center justify-between px-0">
+                <div className="w-4 h-8 bg-slate-100 rounded-r-full -ml-2" />
+                <div className="flex-1 border-t-2 border-dashed border-slate-300 mx-2" />
+                <div className="w-4 h-8 bg-slate-100 rounded-l-full -mr-2" />
               </div>
             </div>
-          </div>
 
-          {/* Section 3: Shipment Details */}
-          <div className="px-6 py-5 border-b border-slate-200">
-            <h3 className="text-sm font-semibold text-slate-800 mb-4 uppercase tracking-wide">
-              {t.shipmentDetails}
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Ticket Body */}
+            <div className="px-6 py-5 space-y-5">
+              {/* Client Section */}
               <div>
-                <span className="text-xs text-slate-500 block mb-1">{t.accountId}</span>
-                <span className="text-sm font-medium text-slate-800">{order.shipment.accountId}</span>
-              </div>
-              <div>
-                <span className="text-xs text-slate-500 block mb-1">{t.type}</span>
-                <span className="text-sm font-medium text-slate-800">{order.shipment.type}</span>
-              </div>
-              <div>
-                <span className="text-xs text-slate-500 block mb-1">{t.items}</span>
-                <span className="text-sm font-medium text-slate-800">{order.shipment.items}</span>
-              </div>
-              <div>
-                <span className="text-xs text-slate-500 block mb-1">{t.packageSize}</span>
-                <span className="text-sm font-medium text-slate-800">{getPackageSizeLabel(order.shipment.packageSize)}</span>
-              </div>
-              <div>
-                <span className="text-xs text-slate-500 block mb-1">{t.replacement}</span>
-                <span className="text-sm font-medium text-slate-800">{order.shipment.replacement ? t.yes : t.no}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Section 4: Financial Breakdown */}
-          <div className="px-6 py-5 border-b border-slate-200">
-            <h3 className="text-sm font-semibold text-slate-800 mb-4 uppercase tracking-wide">
-              {t.financialBreakdown}
-            </h3>
-            <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <span className="text-xs text-blue-600 block mb-1">{t.deliveryFee}</span>
-                  <span className="text-sm font-semibold text-blue-800">
-                    {formatCurrency(order.financial.deliveryFee)} {t.iqd}
-                  </span>
+                <div className="flex items-center gap-2 mb-3">
+                  <Phone className="w-4 h-4 text-slate-400" />
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t.clientInformation}</span>
                 </div>
-                <div>
-                  <span className="text-xs text-blue-600 block mb-1">{t.invoiceId}</span>
-                  <span className="text-sm font-semibold text-blue-800">{order.financial.invoiceId}</span>
-                </div>
-                <div>
-                  <span className="text-xs text-blue-600 block mb-1">{t.financialConfirmed}</span>
-                  <span className="text-sm font-semibold text-blue-800">
-                    {order.financial.financialConfirmed ? t.yes : t.no}
-                  </span>
+                <div className="bg-slate-50 rounded-xl p-4 space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-slate-500">{t.clientName}</span>
+                    <span className="text-sm font-semibold text-slate-800">{order.client.name}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-slate-500">{t.mobile}</span>
+                    <span className="text-sm font-medium text-slate-700" dir="ltr">{order.client.mobile}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-slate-500">{t.secondaryMobile}</span>
+                    <span className="text-sm font-medium text-slate-700" dir="ltr">{order.client.secondaryMobile}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
 
-          {/* Section 5: Notes */}
-          <div className="px-6 py-5">
-            <h3 className="text-sm font-semibold text-slate-800 mb-4 uppercase tracking-wide">
-              {t.notes}
-            </h3>
-            <div className="space-y-4">
+              {/* Location Section */}
               <div>
-                <span className="text-xs text-slate-500 block mb-1">{t.merchantNotes}</span>
-                <span className="text-sm font-medium text-slate-800">{order.notes.merchantNotes}</span>
+                <div className="flex items-center gap-2 mb-3">
+                  <MapPin className="w-4 h-4 text-slate-400" />
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t.location}</span>
+                </div>
+                <div className="bg-slate-50 rounded-xl p-4">
+                  <div className="flex flex-wrap gap-2 text-sm">
+                    <span className="px-3 py-1 bg-white rounded-full border border-slate-200 text-slate-700">{order.client.city}</span>
+                    <span className="px-3 py-1 bg-white rounded-full border border-slate-200 text-slate-700">{order.client.region}</span>
+                    <span className="px-3 py-1 bg-white rounded-full border border-slate-200 text-slate-600 text-xs">{order.client.location}</span>
+                  </div>
+                </div>
               </div>
+
+              {/* Shipment Section */}
               <div>
-                <span className="text-xs text-slate-500 block mb-1">{t.driverIssueNotes}</span>
-                <span className="text-sm font-medium text-slate-800">{order.notes.driverIssueNotes}</span>
+                <div className="flex items-center gap-2 mb-3">
+                  <Package className="w-4 h-4 text-slate-400" />
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t.shipmentDetails}</span>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-slate-50 rounded-xl p-3 text-center">
+                    <div className="text-xs text-slate-500 mb-1">{t.type}</div>
+                    <div className="text-sm font-semibold text-slate-800">{order.shipment.type}</div>
+                  </div>
+                  <div className="bg-slate-50 rounded-xl p-3 text-center">
+                    <div className="text-xs text-slate-500 mb-1">{t.items}</div>
+                    <div className="text-lg font-bold text-slate-800">{order.shipment.items}</div>
+                  </div>
+                  <div className="bg-slate-50 rounded-xl p-3 text-center">
+                    <div className="text-xs text-slate-500 mb-1">{t.packageSize}</div>
+                    <div className="text-sm font-semibold text-slate-800">{getPackageSizeLabel(order.shipment.packageSize)}</div>
+                  </div>
+                </div>
+                <div className="flex gap-3 mt-3">
+                  <div className="flex-1 bg-slate-50 rounded-xl p-3 flex justify-between items-center">
+                    <span className="text-xs text-slate-500">{t.accountId}</span>
+                    <span className="text-sm font-semibold text-slate-800">{order.shipment.accountId}</span>
+                  </div>
+                  <div className="flex-1 bg-slate-50 rounded-xl p-3 flex justify-between items-center">
+                    <span className="text-xs text-slate-500">{t.replacement}</span>
+                    <span className={`text-sm font-semibold ${order.shipment.replacement ? 'text-amber-600' : 'text-slate-500'}`}>
+                      {order.shipment.replacement ? t.yes : t.no}
+                    </span>
+                  </div>
+                </div>
               </div>
+
+              {/* Financial Section */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <CreditCard className="w-4 h-4 text-slate-400" />
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t.financialBreakdown}</span>
+                </div>
+                <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4">
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-sm text-emerald-700">{t.deliveryFee}</span>
+                    <span className="text-xl font-bold text-emerald-800">
+                      {formatCurrency(order.financial.deliveryFee)} <span className="text-sm font-medium">{t.iqd}</span>
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-emerald-600">{t.invoiceId}: {order.financial.invoiceId}</span>
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${order.financial.financialConfirmed ? 'bg-emerald-200 text-emerald-800' : 'bg-amber-200 text-amber-800'}`}>
+                      {order.financial.financialConfirmed ? t.yes : t.no}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Notes Section */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <FileText className="w-4 h-4 text-slate-400" />
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t.notes}</span>
+                </div>
+                <div className="space-y-2">
+                  <div className="bg-amber-50 border border-amber-100 rounded-xl p-3">
+                    <span className="text-xs text-amber-600 block mb-1">{t.merchantNotes}</span>
+                    <span className="text-sm text-amber-800">{order.notes.merchantNotes}</span>
+                  </div>
+                  {order.notes.driverIssueNotes && order.notes.driverIssueNotes !== 'لا يوجد' && (
+                    <div className="bg-red-50 border border-red-100 rounded-xl p-3">
+                      <span className="text-xs text-red-600 block mb-1">{t.driverIssueNotes}</span>
+                      <span className="text-sm text-red-800">{order.notes.driverIssueNotes}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Perforated Edge Bottom */}
+            <div className="relative h-4 bg-slate-100">
+              <div className="absolute inset-x-0 top-0 h-4 flex items-center justify-between px-0">
+                <div className="w-4 h-8 bg-slate-100 rounded-r-full -ml-2" />
+                <div className="flex-1 border-t-2 border-dashed border-slate-300 mx-2" />
+                <div className="w-4 h-8 bg-slate-100 rounded-l-full -mr-2" />
+              </div>
+            </div>
+
+            {/* Barcode Section */}
+            <div className="bg-white px-6 py-6 flex flex-col items-center">
+              <Barcode value={order.orderId} />
+            </div>
+
+            {/* Footer */}
+            <div className="bg-slate-50 px-6 py-3 text-center border-t border-slate-100">
+              <p className="text-xs text-slate-400">Designed by NAFCO.SPACE</p>
             </div>
           </div>
         </div>
       </main>
 
-      {/* Support Button - Fixed Bottom Right */}
+      {/* Support Button */}
       <button
         className="fixed bottom-6 right-6 flex items-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg transition-colors"
         onClick={() => console.log('Support clicked')}
@@ -380,11 +438,6 @@ export default function OrderDetail() {
         <MessageCircle className="w-5 h-5" />
         <span className="text-sm font-medium">{t.support}</span>
       </button>
-
-      {/* Footer */}
-      <footer className="py-4 text-center">
-        <p className="text-xs text-slate-500">Designed by NAFCO.SPACE</p>
-      </footer>
     </div>
   );
 }
