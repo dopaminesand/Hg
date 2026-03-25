@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { LogOut, Download, Calendar, Package, DollarSign, FileText, Clock } from 'lucide-react';
+import { LogOut, Download, Calendar, Package, DollarSign, FileText, Clock, CalendarDays } from 'lucide-react';
 
 interface Order {
   id: number;
@@ -71,6 +71,7 @@ export default function Dashboard() {
       medium: 'Medium',
       large: 'Large',
       small: 'Small',
+      monthlyBreakdown: 'Monthly Breakdown',
     },
     ar: {
       merchantName: 'شركة الرشيد للتوصيل',
@@ -108,6 +109,7 @@ export default function Dashboard() {
       medium: 'متوسط',
       large: 'كبير',
       small: 'صغير',
+      monthlyBreakdown: 'التقرير الشهري',
     },
   };
 
@@ -314,6 +316,15 @@ export default function Dashboard() {
                     <option value="this-month">{t.thisMonth}</option>
                   </select>
                 </div>
+
+                {/* Monthly Breakdown Button */}
+                <button
+                  onClick={() => navigate('/monthly-breakdown')}
+                  className="flex items-center justify-center gap-2 px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg text-sm transition-colors shadow-sm"
+                >
+                  <CalendarDays className="w-4 h-4" />
+                  <span>{t.monthlyBreakdown}</span>
+                </button>
 
                 {/* Export Button */}
                 <button
